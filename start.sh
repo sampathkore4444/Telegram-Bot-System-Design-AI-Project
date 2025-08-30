@@ -24,8 +24,8 @@ else
 fi
 
 # Pull the model
-echo "📦 Downloading deepseek-r1:8b..."
-ollama pull deepseek-r1:8b
+echo "📦 Downloading phi3:3.8b..."
+ollama pull phi3:3.8b
 
 echo "🤖 Starting Telegram bot..."
 python bot.py
