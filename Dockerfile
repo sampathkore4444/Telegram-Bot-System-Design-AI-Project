@@ -2,10 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies including Ollama
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     wget \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Ollama
@@ -18,16 +19,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy bot code
 COPY bot.py .
 COPY start.sh .
+COPY check_ollama.py .
 
-# Make start script executable
+# Make scripts executable
 RUN chmod +x start.sh
+RUN chmod +x check_ollama.py
 
-# Expose Ollama port
 EXPOSE 11434
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-    CMD curl -f http://localhost:11434/api/tags || exit 1
-
-# Use the start script
 CMD ["./start.sh"]

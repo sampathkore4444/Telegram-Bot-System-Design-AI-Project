@@ -28,12 +28,40 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 MODEL_NAME = os.getenv("MODEL_NAME", "deepseek-r1:8b")  # Lighter model for Railway
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
+
 # Initialize Ollama client
 ollama_client = ollama.Client(host=OLLAMA_HOST)
 
 # In-memory cache for free tier (no persistence)
 response_cache = {}
 user_states = {}
+
+
+async def debug_ollama_connection():
+    """Debug Ollama connection issues"""
+    try:
+        # Try to connect to Ollama
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{OLLAMA_HOST}/api/tags", timeout=5) as response:
+                logger.info(f"Ollama connection status: {response.status}")
+                return True
+    except Exception as e:
+        logger.error(f"Ollama connection failed: {e}")
+
+        # Additional debugging
+        try:
+            # Check if port is open
+            import socket
+
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(5)
+            result = sock.connect_ex(("localhost", 11434))
+            logger.info(f"Socket connection test: {result} (0 means success)")
+            sock.close()
+        except Exception as sock_error:
+            logger.error(f"Socket test failed: {sock_error}")
+
+        return False
 
 
 async def check_ollama_health():
