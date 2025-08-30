@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-MODEL_NAME = os.getenv("MODEL_NAME", "deepseek-r1:8b")  # Lighter model for Railway
+MODEL_NAME = os.getenv("MODEL_NAME", "phi3:3.8b")  # Lighter model for Railway
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 
