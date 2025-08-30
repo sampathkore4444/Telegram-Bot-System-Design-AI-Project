@@ -67,11 +67,29 @@ async def debug_ollama_connection():
 async def check_ollama_health():
     """Check if Ollama server is healthy"""
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"{OLLAMA_HOST}/api/tags", timeout=10) as response:
-                return response.status == 200
+        # Try multiple connection approaches
+        endpoints = [
+            f"{OLLAMA_HOST}/api/tags",
+            "http://localhost:11434/api/tags",
+            "http://127.0.0.1:11434/api/tags",
+        ]
+
+        for endpoint in endpoints:
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(endpoint, timeout=10) as response:
+                        if response.status == 200:
+                            logger.info(f"✅ Connected to Ollama at {endpoint}")
+                            return True
+            except Exception as e:
+                logger.warning(f"Failed to connect to {endpoint}: {e}")
+                continue
+
+        logger.error("All connection attempts to Ollama failed")
+        return False
+
     except Exception as e:
-        logger.error(f"Ollama health check failed: {e}")
+        logger.error(f"Ollama health check error: {e}")
         return False
 
 

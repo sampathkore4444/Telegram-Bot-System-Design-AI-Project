@@ -4,25 +4,25 @@ import time
 import os
 
 
-def check_ollama():
-    """Check if Ollama is running"""
-    host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-    max_retries = 10
+def test_connection():
+    """Test Ollama connection"""
+    hosts = ["http://localhost:11434", "http://127.0.0.1:11434"]
 
-    for i in range(max_retries):
+    for host in hosts:
         try:
-            response = requests.get(f"{host}/api/tags", timeout=5)
-            if response.status_code == 200:
-                print("✅ Ollama is running!")
-                return True
-            print(f"Ollama responded with status: {response.status_code}")
+            print(f"Testing connection to {host}...")
+            response = requests.get(f"{host}/api/tags", timeout=10)
+            print(f"✅ Success! Status: {response.status_code}")
+            return True
         except Exception as e:
-            print(f"Attempt {i+1}/{max_retries}: Ollama not ready - {e}")
-        time.sleep(5)
+            print(f"❌ Failed: {e}")
 
-    print("❌ Ollama failed to start")
     return False
 
 
 if __name__ == "__main__":
-    check_ollama()
+    print("Testing Ollama connection...")
+    if test_connection():
+        print("Ollama is running! 🎉")
+    else:
+        print("Ollama is not running 😞")
