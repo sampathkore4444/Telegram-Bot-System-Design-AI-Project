@@ -7,7 +7,7 @@ ollama serve &
 sleep 5
 
 # Pull the model (using a smaller model for Railway free tier)
-ollama pull gemma:2b &
+ollama pull deepseek-r1:8b &
 
 # Wait for model pull to complete
 wait
